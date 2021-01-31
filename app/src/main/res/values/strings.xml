@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">No More Surprises</string>
+    <string name="nav_menu">navivation</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="food_name">FOOD NAME</string>
+    <string name="exp_date">Exp Date</string>
+    <string name="cooked_date">cooked date</string>
+    <string name="consumed">consumed</string>
+    <string name="spoiled">spoiled</string>
+    <string name="good">good</string>
+    <string name="bad">bad</string>
+    <string name="shelf_life">shelf life</string>
+    <string name="exp_placeholder">5 days</string>
+    <string name="name_hint">Enter food name</string>
+    <string name="notification_title">Food expiring!</string>
+    <string name="notification_subtitle">eat leftovers!!</string>
+    <string name="notification_delay">10000</string>
+    <string name="optionmenu_save">save</string>
+    <string name="delete_note">delete</string>
+    <string name="optionmenu_datepicker">date prepared</string>
+    <string name="delte_dialog_title">Delete</string>
+    <string name="delete_dialog_message">Delete Food?</string>
+    <string name="cancel">Cancel</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="food_deleted_from_database">Food moved to trash</string>
+    <string name="app_bar_title">No More Surprises</string>
+    <string name="days_old"> days old</string>
+    <string name="fresh">Fresh</string>
+    <string name="food_name_hint">Food Name</string>
+    <string name="done_button_text">Done</string>
+    <string name="date_button_text">Date</string>
+    <string name="Notifications">Notifications</string>
+    <string name="notifications">Notifications</string>
+    <string name="off">off</string>
+    <string name="on">on</string>
+    <string name="delete_pending">Delete pending...</string>
+    <string name="new_food_item">New Food Item</string>
+
+</resources>

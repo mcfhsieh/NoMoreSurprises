@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="food"
+            type="com.mhsieh.myapplication.data.FoodData" />
+
+        <variable
+            name="viewModel"
+            type="com.mhsieh.myapplication.ui.edit.EditFoodViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/edit_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:elevation="4dp"
+                app:navigationIcon="?attr/homeAsUpIndicator">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/text_size" />
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <EditText
+            android:id="@+id/editTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginBottom="50dp"
+            android:autofillHints="Dish Name"
+            android:backgroundTint="@color/colorPrimary"
+            android:hint="@string/name_hint"
+            android:inputType="text"
+            android:padding="@dimen/edit_frag_padding"
+            android:text="@={viewModel._editFoodNameText}"
+            android:textSize="@dimen/text_size"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/edit_frag_padding"
+            android:text="@={viewModel._editFoodShelfLife}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_anchor="@id/editTextField"
+            app:layout_anchorGravity="bottom"
+            tools:text="3 days old" />
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingStart="80dp"
+            android:paddingEnd="0dp"
+            app:elevation="0dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saveButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:backgroundTint="@color/colorPrimary"
+                app:icon="@drawable/ic_baseline_done_24"
+                app:iconTint="@color/colorAccent"
+                app:layout_constraintStart_toEndOf="@id/editCalendarButton"
+                app:layout_constraintTop_toBottomOf="@id/editTextField" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editCalendarButton"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/bottom_icon_margin_start"
+                app:backgroundTint="@color/colorPrimary"
+                app:icon="@drawable/calendar_icon"
+                app:iconTint="@color/colorAccent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editTextField" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/delete_food"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/bottom_icon_margin_start"
+                app:backgroundTint="@color/colorPrimary"
+                app:icon="@drawable/wasted"
+                app:iconTint="@color/colorAccent"
+                app:layout_constraintStart_toEndOf="@id/saveButton"
+                app:layout_constraintTop_toBottomOf="@id/editTextField" />
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

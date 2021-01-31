@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.mhsieh.myapplication.MainFragment"
+        android:label="MainFragment">
+        <action
+            android:id="@+id/action_mainFragment_to_editFoodFragment"
+            app:destination="@id/editFoodFragment"/>
+        <argument
+            android:name="foodId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_mainFragment_to_newFoodFragment"
+            app:destination="@id/newFoodFragment"
+            app:popUpTo="@id/mainFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/editFoodFragment"
+        android:name="com.mhsieh.myapplication.ui.edit.EditFoodFragment"
+        android:label="EditFoodFragment">
+        <action
+            android:id="@+id/action_editFoodFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_exit_anim"
+            app:popExitAnim="@anim/nav_default_pop_enter_anim"
+            app:popUpTo="@id/editFoodFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="foodId"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <dialog
+        android:id="@+id/newFoodFragment"
+        android:name="com.mhsieh.myapplication.ui.newfood.NewFoodFragment"
+        android:label="NewFoodFragment" />
+</navigation>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!--    <item-->
+<!--        android:id="@+id/edit_item_date"-->
+<!--        app:showAsAction="ifRoom"-->
+<!--        android:icon="@drawable/calendar_icon"-->
+<!--        android:title="@string/optionmenu_datepicker"/>-->
+<!--    <item-->
+<!--        android:id="@+id/edit_item_delete"-->
+<!--        app:showAsAction="ifRoom"-->
+<!--        android:icon="@drawable/wasted"-->
+<!--        android:title="@string/delete_note"/>-->
+<!--    <item-->
+<!--        android:id="@+id/edit_item_save"-->
+<!--        app:showAsAction="ifRoom"-->
+<!--        android:icon="@drawable/ic_baseline_done_24"-->
+<!--        android:title="@string/optionmenu_save"/>-->
+</menu>
