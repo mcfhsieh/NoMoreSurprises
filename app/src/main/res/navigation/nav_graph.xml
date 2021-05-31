@@ -7,10 +7,10 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.mhsieh.myapplication.MainFragment"
-        android:label="MainFragment">
+        android:label="mainFragment">
         <action
             android:id="@+id/action_mainFragment_to_editFoodFragment"
-            app:destination="@id/editFoodFragment"/>
+            app:destination="@id/editFoodFragment" />
         <argument
             android:name="foodId"
             android:defaultValue="0"
@@ -18,7 +18,7 @@
         <action
             android:id="@+id/action_mainFragment_to_newFoodFragment"
             app:destination="@id/newFoodFragment"
-            app:popUpTo="@id/mainFragment" />
+            app:popUpToInclusive="false" />
 
     </fragment>
     <fragment
@@ -42,5 +42,9 @@
     <dialog
         android:id="@+id/newFoodFragment"
         android:name="com.mhsieh.myapplication.ui.newfood.NewFoodFragment"
-        android:label="NewFoodFragment" />
+        android:label="NewFoodFragment" >
+        <action
+            android:id="@+id/action_newFoodFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </dialog>
 </navigation>

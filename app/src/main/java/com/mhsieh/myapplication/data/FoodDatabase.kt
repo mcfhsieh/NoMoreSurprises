@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.mhsieh.myapplication.util.calcShelfLife
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,14 +31,14 @@ abstract class FoodDatabase: RoomDatabase(){
                     "Meal_Database"
                 )
                     .fallbackToDestructiveMigration()
-                    .addCallback(MealDatabaseCallback(scope))
+                    .addCallback(FoodDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
                 instance
             }
         }
 
-        private class MealDatabaseCallback(
+        private class FoodDatabaseCallback(
             private val scope: CoroutineScope
         ) :
             RoomDatabase.Callback() {

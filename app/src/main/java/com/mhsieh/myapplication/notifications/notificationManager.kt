@@ -21,7 +21,7 @@ import timber.log.Timber
 class NotificationManager : JobIntentService() {
 
     lateinit var foodName: String
-    var shelfLife = 0
+    var foodId = 0
 
     companion object {
         const val NOTIFICATION_ID = "com.mhsieh.myapplication.notifications"
@@ -29,54 +29,66 @@ class NotificationManager : JobIntentService() {
         const val NOTIFICATION_CHANNEL = "NoSurprises_channel_01"
         const val REQUEST_CODE = 10
         fun enqueueWork(context: Context, intent: Intent) {
-            enqueueWork(context, com.mhsieh.myapplication.notifications.NotificationManager::class.java, 1, intent)
+            enqueueWork(
+                context,
+                com.mhsieh.myapplication.notifications.NotificationManager::class.java,
+                1,
+                intent
+            )
         }
     }
 
     override fun onHandleWork(intent: Intent) {
         foodName = intent.getStringExtra("Food Name").toString()
-        shelfLife = intent.getIntExtra("Shelf Life", 0)
-        if(shelfLife > 2){
-            sendFoodAlert(1)
-        }
+        foodId = intent.getIntExtra("Food Id", 0)
+//        if(shelfLife > 2){
+//            sendFoodAlert(1)
+//        }
+        sendFoodAlert(1)
     }
 
     private fun sendFoodAlert(id: Int) {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         intent.putExtra(NOTIFICATION_ID, id)
+        intent.putExtra("FoodId", foodId)
         val notificationManager =
             applicationContext.getSystemService(NOTIFICATION_SERVICE) as
                     NotificationManager
         val bitmap = applicationContext.vectorToBitmap(R.drawable.ic_new_food_24)
-        val titleNotification = "$foodName is about to expire"
+        val titleNotification = "Consider eating $foodName for dinner"
         val subtitleNotification = applicationContext.getString(R.string.notification_subtitle)
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            intent,
+            0)
+
         val notification = NotificationCompat.Builder(
             applicationContext,
             NOTIFICATION_CHANNEL
-        )
-            .setLargeIcon(bitmap).setSmallIcon(R.drawable.calendar_icon)
-            .setContentTitle(titleNotification).setContentText(subtitleNotification)
-            .setDefaults(Notification.DEFAULT_ALL).setContentIntent(pendingIntent)
+        )   .setLargeIcon(bitmap)
+            .setSmallIcon(R.drawable.calendar_icon)
+            .setContentTitle(titleNotification)
+            .setContentText(subtitleNotification)
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-        notification.priority = NotificationCompat.PRIORITY_MAX
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification.setChannelId(NOTIFICATION_CHANNEL)
-
             val ringtoneManager =
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val audioAttributes =
                 AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
-
             val channel =
                 NotificationChannel(
                     NOTIFICATION_CHANNEL,
                     NOTIFICATION_NAME,
                     NotificationManager.IMPORTANCE_HIGH
                 )
-
             channel.enableLights(true)
             channel.lightColor = Color.RED
             channel.enableVibration(true)

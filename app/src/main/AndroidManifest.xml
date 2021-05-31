@@ -13,18 +13,29 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="http"
+                    android:host="nomoresurprises.com" />
             </intent-filter>
         </activity>
         <service
             android:name=".notifications.NotificationManager"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <receiver android:name=".notifications.AlarmReceiver"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:stopWithTask="false" />
+        <receiver
+            android:name=".notifications.AlarmReceiver"
             android:enabled="true"
-            android:exported="true"/>
-
+            android:exported="true" />
+        <meta-data
+            android:name="com.google.android.shortcuts"
+            android:resource="@xml/shortcuts"/>
     </application>
 
 </manifest>

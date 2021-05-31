@@ -20,12 +20,9 @@ class NewFoodViewModel (val app: Application): AndroidViewModel(app){
     private val repo:FoodRepository
     private lateinit var newFood:FoodData
 
-
-
     init {
         val foodDao = FoodDatabase.getDatabase(app, scope).foodDao()
         repo = FoodRepository(foodDao)
-        println("viewModel init called")
     }
 
     val _foodName = MutableLiveData<String>()

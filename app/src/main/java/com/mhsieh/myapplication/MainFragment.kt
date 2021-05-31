@@ -1,6 +1,7 @@
 package com.mhsieh.myapplication
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -19,28 +20,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mhsieh.myapplication.data.FoodData
 import com.mhsieh.myapplication.data.FoodViewModel
 import com.mhsieh.myapplication.databinding.MainFragmentLayoutBinding
-import com.mhsieh.myapplication.databinding.NotificationToggleDialogLayoutBinding
-import com.mhsieh.myapplication.notifications.AlarmReceiver
 import com.mhsieh.myapplication.notifications.NotificationToggleDialog
 import com.mhsieh.myapplication.ui.edit.EditFoodFragmentArgs
 import com.mhsieh.myapplication.ui.edit.UndoDeleteDialog
 import com.mhsieh.myapplication.ui.newfood.NewFoodFragment
 import com.mhsieh.myapplication.util.calcShelfLife
+import io.reactivex.internal.operators.observable.ObservableError
 import timber.log.Timber
 import java.util.*
 
-class MainFragment : Fragment(), UndoDeleteDialog.Callbacks{
+class MainFragment : Fragment(), UndoDeleteDialog.Callbacks {
     private var _binding: MainFragmentLayoutBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<EditFoodFragmentArgs>()
     private var newFoodDialog: NewFoodFragment? = null
-    private var notificationSwitchDialog: NotificationToggleDialog? = null
     private lateinit var adapter: FoodAdapter
     private lateinit var viewModel: FoodViewModel
-    private var editedFoodId = 0
     private lateinit var navController: NavController
-    private lateinit var appBarConfig:AppBarConfiguration
-
+    private lateinit var appBarConfig: AppBarConfiguration
+    private var mainMenu: Menu? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,48 +46,60 @@ class MainFragment : Fragment(), UndoDeleteDialog.Callbacks{
         savedInstanceState: Bundle?
     ): View? {
         getArgs()
-        navController = findNavController()
         _binding = MainFragmentLayoutBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        navController = findNavController()
         val recyclerView = binding.mRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        viewModel = ViewModelProvider(this).get(FoodViewModel::class.java)
         adapter = FoodAdapter(FoodDataListener { foodId ->
-            val action = MainFragmentDirections.actionMainFragmentToEditFoodFragment(foodId)
-            view?.findNavController()
-                ?.navigate(action)
-            editedFoodId = foodId
+            viewModel.onFoodItemClicked(foodId)
+            // editedFoodId = foodId
         }).apply {
             onFoodWastedPress = { food ->
                 food.spoiled = true
                 viewModel.update(food)
-
             }
         }
         recyclerView.adapter = adapter
-        setuptoolbar()
+        setUpToolbar()
         setHasOptionsMenu(true)
-        return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.allDishes.observe(viewLifecycleOwner, Observer {
-            it.let {
-                adapter.submitList(it)
-            }
-        })
-        viewModel.updateShelfLife()
-        binding.newFoodButton.setOnClickListener {
+        /*binding.newFoodButton.setOnClickListener {
             if (newFoodDialog == null) {
                 newFoodDialog = NewFoodFragment.newInstance()
                 newFoodDialog?.let { dialog ->
                     dialog.show(requireActivity().supportFragmentManager, dialog.tag)
                 }
+            } else newFoodDialog?.dialog?.show()
+        }*/
+        viewModel = ViewModelProvider(this).get(FoodViewModel::class.java)
+        viewModel.allDishes.observe(viewLifecycleOwner, Observer {
+            it.let {
+                adapter.submitList(it)
             }
-            else newFoodDialog?.dialog?.show()
-        }
+        })
+        viewModel.notificationsOn.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                Toast.makeText(requireContext(), "Notifications Active", Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(requireContext(), "Notifications off", Toast.LENGTH_SHORT).show()
+        })
+        viewModel.navigateToEditFood.observe(viewLifecycleOwner, Observer { foodId ->
+            foodId?.let {
+                this.findNavController().navigate(
+                    MainFragmentDirections.actionMainFragmentToEditFoodFragment(foodId)
+                )
+                viewModel.onEditFoodNavigated()
+            }
+        })
+        viewModel.navigateToNewFood.observe(viewLifecycleOwner, Observer{
+            if(it == true){
+                findNavController().navigate(MainFragmentDirections.actionMainFragmentToNewFoodFragment())
+            viewModel.onNewFoodDialogNavigated()
+            }
+        })
+        return binding.root
     }
-    fun setuptoolbar() {
+
+    private fun setUpToolbar() {
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.myToolbar)
             supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -97,6 +107,7 @@ class MainFragment : Fragment(), UndoDeleteDialog.Callbacks{
             setupActionBarWithNavController(navController, appBarConfig)
         }
     }
+
     private fun getArgs() {
         var foodId = args.foodId
         if (foodId > 0) {
@@ -105,9 +116,9 @@ class MainFragment : Fragment(), UndoDeleteDialog.Callbacks{
                 show(this@MainFragment.parentFragmentManager, "11")
             }
             Timber.d("EditFood args:$foodId")
-        }
-        else Timber.d("Bundle is empty")
+        } else Timber.d("Bundle is empty")
     }
+
     override fun onUndoSelected(undo: Boolean) {
         Timber.d("Undo selected")
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
@@ -117,7 +128,7 @@ class MainFragment : Fragment(), UndoDeleteDialog.Callbacks{
         if (datePrepared != null) {
             cal.timeInMillis = datePrepared
         }
-        val deletedFood = FoodData().apply{
+        val deletedFood = FoodData().apply {
             this.foodName = backupFoodName!!
             this.datePrepared = cal
             this.shelfLife = cal.calcShelfLife()
@@ -128,41 +139,55 @@ class MainFragment : Fragment(), UndoDeleteDialog.Callbacks{
         }
         Toast.makeText(requireContext(), "$backupFoodName", Toast.LENGTH_SHORT).show()
     }
-    override fun onOptionsItemSelected(item: MenuItem):Boolean {
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
 
         return when (item.itemId) {
             R.id.notifications -> {
-                Timber.d("notifications selected")
-                notificationSwitchDialog = NotificationToggleDialog.newInstance()
-                notificationSwitchDialog?.let { dialog ->
-                    dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+                if (viewModel.notificationsOn.value == true) {
+                    viewModel.turnOffNotifications()
+                    viewModel.cancelFoodAlarm(this.requireContext())
+                    item.setIcon(R.drawable.ic_outline_add_alert_24)
+                    sharedPref?.edit{
+                        putBoolean("notifications on", false)
+                        commit()
+                    }
+                } else {
+                    viewModel.turnOnNotifications()
+                    viewModel.scheduleFoodAlarm(this.requireContext())
+                    item.setIcon(R.drawable.alert_white)
+                    sharedPref?.edit{
+                        putBoolean("notifications on", true)
+                        commit()
+                    }
                 }
                 true
             }
-                else -> super.onOptionsItemSelected(item)
-
-                /*if (notificationSwitchDialog == null) {
-                    notificationSwitchDialog = NotificationToggleDialog.newInstance()
-                    notificationSwitchDialog?.let { dialog ->
-                        dialog.show(requireActivity().supportFragmentManager, dialog.tag)
-                    }
-                    true
-                }
-                else {
-                    notificationSwitchDialog?.dialog?.show()
-                    true
-                }
-            }
-            else -> super.onOptionsItemSelected(item)*/
+            else -> super.onOptionsItemSelected(item)
         }
     }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
         inflater.inflate(R.menu.main_settings_menu, menu)
-        //menu.findItem(R.id.notifications).isVisible = args.noteIdentifier != null
+        mainMenu = menu
+        var item: MenuItem? = mainMenu?.findItem(R.id.notifications)
+        if (sharedPref?.getBoolean("notifications on", false) == true){
+            item?.setIcon(R.drawable.alert_white)
+        }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding =  null
+        _binding = null
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("notification state", viewModel.notificationsOn.value!!)
+    }
+
 }

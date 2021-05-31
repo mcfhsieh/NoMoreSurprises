@@ -1,7 +1,5 @@
 package com.mhsieh.myapplication.ui.newfood
 
-import android.app.Activity
-import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +10,6 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -61,11 +58,12 @@ class NewFoodFragment : BottomSheetDialogFragment(), CalendarDialog.Callbacks {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.new_food_fragment_layout, container, false
         )
+        viewModel = ViewModelProvider(this).get(NewFoodViewModel::class.java)
         foodName = binding.newFoodText.text.toString()
         datePickerButton = binding.nCalendarButton
         addFoodButton = binding.addFood
@@ -79,12 +77,8 @@ class NewFoodFragment : BottomSheetDialogFragment(), CalendarDialog.Callbacks {
                 show(this@NewFoodFragment.parentFragmentManager, DIALOG_DATE)
             }
         }
-        return binding.root
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(NewFoodViewModel::class.java)
+        return binding.root
     }
 
     private fun insertNewFood() {

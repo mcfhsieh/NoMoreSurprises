@@ -37,5 +37,6 @@
     <string name="on">on</string>
     <string name="delete_pending">Delete pending...</string>
     <string name="new_food_item">New Food Item</string>
+    <string name="food_spoiled">Lasted %1$d days</string>
 
 </resources>

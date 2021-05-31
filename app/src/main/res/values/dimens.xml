@@ -9,5 +9,7 @@
     <dimen name="edit_frag_padding">20dp</dimen>
     <dimen name="edit_text_margin">20dp</dimen>
     <dimen name="bottom_icon_margin_start">60dp</dimen>
+    <dimen name="margin_normal">16dp</dimen>
+    <dimen name="padding_normal">8dp</dimen>
 
 </resources>

@@ -6,6 +6,7 @@ import android.graphics.Bitmap.createBitmap
 import android.graphics.Canvas
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import kotlinx.coroutines.delay
 import java.util.*
 
 fun EditText.showKeyboard() {
@@ -29,13 +30,13 @@ fun Calendar.calcShelfLife(): Int{
 }
 
 fun Calendar.dinerTime(): Long{
+
     val currentHour = this.get(Calendar.HOUR_OF_DAY)
-    var delay = 0
-    if(currentHour >= 17){
-        delay = (23 - currentHour) + 17
+    var hourDelay = if(currentHour >= 17){
+        (23 - currentHour) + 17
     }
-    else delay = 17 - currentHour
-    delay = delay *60*60*1000
+    else 17 - currentHour
+    var delay = hourDelay * 60 * 60 * 1000
     return delay.toLong()
 }
 
@@ -49,3 +50,4 @@ fun Context.vectorToBitmap(drawableId: Int): Bitmap? {
     drawable.draw(canvas)
     return bitmap
 }
+

@@ -66,14 +66,10 @@ class EditFoodFragment : Fragment(), CalendarDialog.Callbacks{
         saveButton = binding.saveButton
 
         setuptoolbar()
-/*        toolbar.setNavigationOnClickListener {
-            view?.findNavController()?.navigate(R.id.action_editFoodFragment_to_mainFragment)
-            Timber.d("back arrow pressed")
-        }*/
         return binding.root
     }
 
-    fun setuptoolbar() {
+    private fun setuptoolbar() {
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.editToolbar)
             supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -103,6 +99,7 @@ class EditFoodFragment : Fragment(), CalendarDialog.Callbacks{
 
         binding.deleteFood.setOnClickListener {
             foodBackup()
+            viewModel.cancelFoodAlarm(requireContext(), foodId)
             viewModel.deleteFood()
             val action = EditFoodFragmentDirections.actionEditFoodFragmentToMainFragment(foodId)
             Timber.d("Args sent to mainfrag: $foodId")
